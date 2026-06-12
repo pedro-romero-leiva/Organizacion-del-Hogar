@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#14161c">
+<title>Nido – Gestión del hogar</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Fraunces:ital,wght@0,300;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ee;--surface:#ffffff;--surface2:#efece4;--surface3:#e6e2d7;
+  --border:#e2ddd1;--border2:#cfc9ba;
+  --accent:#2f7d5f;--accent-soft:rgba(47,125,95,.12);
+  --green:#2f9e6e;--blue:#4a7fd6;--purple:#8b6fd0;--amber:#d99a2b;--red:#d65a4a;--pink:#cf5d8e;--teal:#2aa198;
+  --text:#26251f;--text2:#7d7a6c;--text3:#b3afa0;
+  --shadow:0 6px 24px rgba(60,55,40,.08);
+  --r:14px;--rs:9px;
+}
+html[data-theme="dark"]{
+  --bg:#101216;--surface:#171a21;--surface2:#1f232d;--surface3:#272c38;
+  --border:#272b37;--border2:#363c4d;
+  --accent:#3fae84;--accent-soft:rgba(63,174,132,.14);
+  --green:#3fae84;--blue:#6a98e8;--purple:#a48ae6;--amber:#e6b04a;--red:#e87362;--pink:#e07aa8;--teal:#3fc2b7;
+  --text:#e4e6ee;--text2:#8d92a3;--text3:#4d5263;
+  --shadow:0 8px 28px rgba(0,0,0,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;overflow-x:hidden;transition:background .25s,color .25s;}
+button{font-family:'DM Sans',sans-serif;}
+input,select,textarea{font-family:'DM Sans',sans-serif;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--rs);padding:10px 13px;font-size:.92rem;color:var(--text);width:100%;outline:none;transition:border-color .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+label{font-size:.78rem;color:var(--text2);font-weight:600;display:block;margin-bottom:5px;letter-spacing:.02em;}
+.field{margin-bottom:14px;}
+
+/* ---- TOPBAR ---- */
+#topbar{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;
+  padding:11px 20px;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.logo{font-family:'Fraunces',serif;font-size:1.3rem;letter-spacing:-.02em;display:flex;align-items:center;gap:8px;}
+.logo .casa{font-size:1.15rem;}
+.logo em{color:var(--accent);font-style:normal;}
+.top-actions{display:flex;align-items:center;gap:8px;}
+.icon-btn{background:var(--surface);border:1px solid var(--border);border-radius:50px;width:36px;height:36px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;color:var(--text2);transition:border-color .2s,color .2s;}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);}
+#user-pill{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);
+  border-radius:50px;padding:4px 12px 4px 5px;font-size:.8rem;cursor:pointer;transition:border-color .2s;}
+#user-pill:hover{border-color:var(--accent);}
+#user-pill img{width:26px;height:26px;border-radius:50%;object-fit:cover;}
+.uname{font-weight:600;line-height:1.1;}
+.uemail{font-size:.68rem;color:var(--text2);}
+#login-btn{background:var(--accent);color:#fff;border:none;border-radius:50px;padding:9px 22px;
+  font-size:.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:opacity .2s,transform .15s;}
+#login-btn:hover{opacity:.88;transform:translateY(-1px);}
+
+/* ---- SPLASH ---- */
+#splash{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:calc(100dvh - 60px);gap:20px;padding:40px 24px;text-align:center;}
+#splash .big-casa{font-size:3.2rem;}
+#splash h1{font-family:'Fraunces',serif;font-size:clamp(2.1rem,7vw,3.6rem);line-height:1.1;letter-spacing:-.03em;}
+#splash h1 em{color:var(--accent);font-style:italic;}
+#splash p{color:var(--text2);font-size:.98rem;max-width:460px;line-height:1.65;}
+.chips{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:4px;}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:50px;
+  padding:6px 14px;font-size:.78rem;color:var(--text2);display:flex;align-items:center;gap:6px;}
+.chip .dot{width:7px;height:7px;border-radius:50%;}
+
+/* ---- NAV ---- */
+#mainnav{display:none;gap:6px;padding:14px 20px 0;max-width:1100px;margin:0 auto;flex-wrap:wrap;}
+.nav-tab{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);
+  border-radius:50px;padding:9px 18px;font-size:.86rem;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s;}
+.nav-tab:hover{border-color:var(--tab-c);color:var(--text);}
+.nav-tab.active{background:var(--tab-c);border-color:var(--tab-c);color:#fff;}
+.nav-tab .nicon{font-size:1rem;line-height:1;}
+.nav-badge{background:rgba(255,255,255,.25);border-radius:50px;font-size:.68rem;padding:1px 7px;font-weight:700;}
+.nav-tab:not(.active) .nav-badge{background:var(--tab-c);color:#fff;}
+
+/* ---- VIEWS ---- */
+.view{display:none;padding:22px 20px 110px;max-width:1100px;margin:0 auto;}
+.view-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.view-title{font-family:'Fraunces',serif;font-size:1.45rem;letter-spacing:-.02em;}
+.view-sub{color:var(--text2);font-size:.82rem;margin-top:2px;}
+.btn{border:none;border-radius:50px;padding:9px 18px;font-size:.84rem;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;transition:opacity .2s,transform .15s;}
+.btn:hover{opacity:.88;transform:translateY(-1px);}
+.btn-acc{background:var(--accent);color:#fff;}
+.btn-ghost{background:var(--surface);color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2);}
+.btn-red{background:var(--red);color:#fff;}
+.btn-sm{padding:6px 13px;font-size:.78rem;}
+
+/* ---- CARDS / GRIDS ---- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:15px 16px;position:relative;transition:border-color .2s;}
+.card:hover{border-color:var(--border2);}
+.section-label{font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);
+  margin:22px 0 10px;display:flex;align-items:center;gap:8px;}
+.section-label .sl-dot{width:8px;height:8px;border-radius:3px;}
+.empty{color:var(--text3);font-size:.86rem;padding:28px 16px;text-align:center;border:1.5px dashed var(--border);border-radius:var(--r);}
+
+/* comida */
+.shop-item{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:12px 15px;margin-bottom:8px;cursor:pointer;transition:opacity .2s,border-color .2s;}
+.shop-item:hover{border-color:var(--green);}
+.shop-check{width:22px;height:22px;border-radius:7px;border:2px solid var(--border2);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff;transition:all .15s;}
+.shop-item.done{opacity:.45;}
+.shop-item.done .shop-check{background:var(--green);border-color:var(--green);}
+.shop-item.done .shop-name{text-decoration:line-through;}
+.shop-name{font-weight:600;font-size:.9rem;}
+.shop-meta{font-size:.74rem;color:var(--text2);}
+.inv-card{display:flex;flex-direction:column;gap:8px;}
+.inv-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.inv-name{font-weight:600;font-size:.92rem;line-height:1.25;}
+.inv-brand{font-size:.74rem;color:var(--text2);margin-top:1px;}
+.inv-qty-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.stepper{display:flex;align-items:center;gap:0;border:1px solid var(--border);border-radius:50px;overflow:hidden;}
+.stepper button{background:var(--surface2);border:none;width:34px;height:32px;font-size:1.05rem;cursor:pointer;color:var(--text);transition:background .15s;}
+.stepper button:hover{background:var(--surface3);}
+.stepper .qty{min-width:44px;text-align:center;font-weight:700;font-size:.95rem;}
+.qty-zero{color:var(--red);}
+.qty-low{color:var(--amber);}
+.pill{font-size:.66rem;font-weight:700;border-radius:50px;padding:3px 9px;letter-spacing:.03em;}
+
+/* pagos */
+.pay-card{display:flex;flex-direction:column;gap:10px;}
+.pay-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.pay-name{font-weight:600;font-size:.95rem;}
+.pay-amount{font-family:'Fraunces',serif;font-size:1.45rem;letter-spacing:-.02em;}
+.pay-meta{font-size:.76rem;color:var(--text2);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.pay-actions{display:flex;gap:7px;flex-wrap:wrap;}
+.paid-badge{background:var(--accent-soft);color:var(--accent);}
+.due-badge{background:rgba(214,90,74,.12);color:var(--red);}
+.soon-badge{background:rgba(217,154,43,.14);color:var(--amber);}
+
+/* tareas */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+.day-col{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px;min-height:120px;}
+.day-col.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
+.day-head{font-size:.72rem;font-weight:700;letter-spacing:.06em;color:var(--text2);text-transform:uppercase;margin-bottom:8px;text-align:center;}
+.day-col.today .day-head{color:var(--accent);}
+.chore-chip{border-radius:var(--rs);padding:7px 9px;font-size:.74rem;font-weight:600;margin-bottom:6px;cursor:pointer;line-height:1.3;color:#fff;transition:transform .15s;}
+.chore-chip:hover{transform:translateY(-1px);}
+.chore-chip .who{display:block;font-size:.64rem;opacity:.85;font-weight:500;}
+.chore-list-item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r);padding:11px 15px;margin-bottom:8px;}
+
+/* ---- MODALS ---- */
+.overlay{position:fixed;inset:0;background:rgba(12,12,16,.55);backdrop-filter:blur(5px);z-index:500;
+  display:none;align-items:flex-end;justify-content:center;padding:0;}
+.overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 0 0;width:100%;max-width:520px;
+  padding:22px 22px 30px;max-height:88dvh;overflow-y:auto;animation:slideup .25s ease;}
+@keyframes slideup{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mtitle{font-family:'Fraunces',serif;font-size:1.2rem;margin-bottom:16px;letter-spacing:-.02em;}
+.mactions{display:flex;gap:9px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.check-row{display:flex;align-items:center;gap:10px;font-size:.86rem;cursor:pointer;padding:8px 0;}
+.check-row input{width:auto;}
+.day-picker{display:flex;gap:6px;flex-wrap:wrap;}
+.day-pick{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--surface2);
+  font-size:.74rem;font-weight:700;cursor:pointer;color:var(--text2);transition:all .15s;}
+.day-pick.sel{background:var(--accent);border-color:var(--accent);color:#fff;}
+.hint{font-size:.74rem;color:var(--text2);line-height:1.5;margin-top:6px;}
+.code-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 13px;
+  font-family:monospace;font-size:.78rem;word-break:break-all;cursor:pointer;transition:border-color .2s;}
+.code-box:hover{border-color:var(--accent);}
+.collab-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:.85rem;}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.68rem;font-weight:700;color:#fff;flex-shrink:0;}
+
+/* ---- TOAST ---- */
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);z-index:900;
+  background:var(--surface3);border:1px solid var(--border2);color:var(--text);border-radius:50px;
+  padding:11px 22px;font-size:.85rem;font-weight:600;opacity:0;pointer-events:none;transition:all .3s;
+  display:flex;align-items:center;gap:9px;box-shadow:var(--shadow);max-width:90vw;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ---- BOTTOM NAV (mobile) ---- */
+#bottomnav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;
+  background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(18px);
+  border-top:1px solid var(--border);padding:8px 6px calc(8px + env(safe-area-inset-bottom));}
+#bottomnav .bn-inner{display:flex;justify-content:space-around;max-width:500px;margin:0 auto;}
+.bn-tab{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;
+  font-size:.62rem;font-weight:600;color:var(--text2);cursor:pointer;padding:5px 12px;border-radius:12px;position:relative;}
+.bn-tab .nicon{font-size:1.3rem;line-height:1;}
+.bn-tab.active{color:var(--tab-c);}
+.bn-dot{position:absolute;top:2px;right:8px;background:var(--red);color:#fff;font-size:.58rem;
+  border-radius:50px;padding:1px 5px;font-weight:700;}
+
+@media(max-width:680px){
+  #mainnav{display:none!important;}
+  #bottomnav.on{display:block;}
+  .week-grid{grid-template-columns:1fr;}
+  .day-col{min-height:auto;}
+  .day-col:not(.has-chores):not(.today){display:none;}
+  .view{padding:18px 14px 120px;}
+  .row2{grid-template-columns:1fr;}
+}
+@media(min-width:681px){
+  .overlay{align-items:center;padding:20px;}
+  .modal{border-radius:20px;}
+  #toast{bottom:30px;}
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="logo"><span class="casa">🏠</span> Ni<em>do</em></div>
+  <div class="top-actions">
+    <button class="icon-btn" id="theme-btn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+    <button class="icon-btn" id="sync-btn" onclick="syncNow()" title="Sincronizar" style="display:none">⟳</button>
+    <button class="icon-btn" id="share-btn" onclick="openShare()" title="Compartir" style="display:none">🤝</button>
+    <div id="auth-area">
+      <button id="login-btn" onclick="handleLogin()">
+        <svg width="15" height="15" viewBox="0 0 48 48"><path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
+        Entrar con Google
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="splash">
+  <div class="big-casa">🏠</div>
+  <h1>El hogar,<br><em>organizado entre dos</em></h1>
+  <p>Inventario de comida, lista de compras automática, pagos del mes con recordatorios en Calendar y tareas de la casa. Todo compartido en su Drive.</p>
+  <button class="btn btn-acc" onclick="handleLogin()" style="padding:12px 28px;font-size:.95rem;">Comenzar</button>
+  <div class="chips">
+    <div class="chip"><span class="dot" style="background:var(--green)"></span>Comida</div>
+    <div class="chip"><span class="dot" style="background:var(--blue)"></span>Productos</div>
+    <div class="chip"><span class="dot" style="background:var(--amber)"></span>Pagos</div>
+    <div class="chip"><span class="dot" style="background:var(--pink)"></span>Tareas</div>
+  </div>
+</div>
+
+<div id="mainnav">
+  <button class="nav-tab" style="--tab-c:var(--green)" data-v="comida" onclick="go('comida')"><span class="nicon">🥑</span> Comida <span class="nav-badge" id="nb-comida" style="display:none">0</span></button>
+  <button class="nav-tab" style="--tab-c:var(--blue)" data-v="productos" onclick="go('productos')"><span class="nicon">📦</span> Productos</button>
+  <button class="nav-tab" style="--tab-c:var(--amber)" data-v="pagos" onclick="go('pagos')"><span class="nicon">💸</span> Pagos <span class="nav-badge" id="nb-pagos" style="display:none">0</span></button>
+  <button class="nav-tab" style="--tab-c:var(--pink)" data-v="tareas" onclick="go('tareas')"><span class="nicon">🧹</span> Tareas</button>
+</div>
+
+<!-- COMIDA -->
+<div class="view" id="v-comida">
+  <div class="view-head">
+    <div><div class="view-title">Gestión de la comida</div><div class="view-sub">Lo que se acaba pasa solo a la lista de compras</div></div>
+  </div>
+  <div class="section-label"><span class="sl-dot" style="background:var(--red)"></span> Por comprar <span id="shop-count" style="color:var(--text3);font-weight:500"></span></div>
+  <div id="shop-list"></div>
+  <div class="section-label"><span class="sl-dot" style="background:var(--green)"></span> Inventario</div>
+  <div style="margin-bottom:12px"><input id="inv-search" placeholder="🔍 Buscar en el inventario..." oninput="renderComida()"></div>
+  <div class="grid" id="inv-grid"></div>
+</div>
+
+<!-- PRODUCTOS -->
+<div class="view" id="v-productos">
+  <div class="view-head">
+    <div><div class="view-title">Productos</div><div class="view-sub">El catálogo de lo que compran en la casa</div></div>
+    <button class="btn btn-acc" onclick="openProductModal()">＋ Nuevo producto</button>
+  </div>
+  <div style="margin-bottom:12px"><input id="prod-search" placeholder="🔍 Buscar producto..." oninput="renderProductos()"></div>
+  <div class="grid" id="prod-grid"></div>
+</div>
+
+<!-- PAGOS -->
+<div class="view" id="v-pagos">
+  <div class="view-head">
+    <div><div class="view-title">Pagos del hogar</div><div class="view-sub" id="pagos-sub">Alquiler, servicios y todo lo fijo del mes</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-ghost" id="sheet-btn" onclick="openFinanzas()">📊 Finanzas</button>
+      <button class="btn btn-acc" onclick="openPayModal()">＋ Nuevo pago</button>
+    </div>
+  </div>
+  <div class="grid" id="pay-grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))"></div>
+</div>
+
+<!-- TAREAS -->
+<div class="view" id="v-tareas">
+  <div class="view-head">
+    <div><div class="view-title">Tareas del hogar</div><div class="view-sub">Quién hace qué y cuándo</div></div>
+    <button class="btn btn-acc" onclick="openChoreModal()">＋ Nueva tarea</button>
+  </div>
+  <div class="week-grid" id="week-grid"></div>
+  <div class="section-label"><span class="sl-dot" style="background:var(--pink)"></span> Todas las tareas</div>
+  <div id="chore-list"></div>
+</div>
+
+<!-- MODAL: producto -->
+<div class="overlay" id="m-product">
+  <div class="modal">
+    <div class="mtitle" id="mp-title">Nuevo producto</div>
+    <div class="field"><label>Nombre *</label><input id="p-name" placeholder="ej. Mantequilla de maní"></div>
+    <div class="field"><label>Marca / descripción</label><input id="p-brand" placeholder="ej. Marca X, la del frasco verde"></div>
+    <div class="row2">
+      <div class="field"><label>Categoría</label>
+        <select id="p-cat"><option>Comida</option><option>Limpieza</option><option>Higiene</option><option>Otro</option></select></div>
+      <div class="field"><label>Unidad</label><input id="p-unit" placeholder="ej. frasco, kg, paquete"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Cantidad actual</label><input id="p-qty" type="number" min="0" value="1"></div>
+      <div class="field"><label>Mínimo antes de comprar</label><input id="p-min" type="number" min="0" value="0">
+        <div class="hint">Si llega a este número, pasa a la lista de compras.</div></div>
+    </div>
+    <div class="mactions">
+      <button class="btn btn-red btn-sm" id="p-delete" style="display:none;margin-right:auto" onclick="deleteProduct()">Eliminar</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-product')">Cancelar</button>
+      <button class="btn btn-acc" onclick="saveProduct()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: pago -->
+<div class="overlay" id="m-pay">
+  <div class="modal">
+    <div class="mtitle" id="mpay-title">Nuevo pago</div>
+    <div class="field"><label>Nombre *</label><input id="pay-name" placeholder="ej. Alquiler, Internet, Agua"></div>
+    <div class="row2">
+      <div class="field"><label>Monto base (₡)</label><input id="pay-amount" type="number" min="0" placeholder="ej. 250000"></div>
+      <div class="field"><label>Día del mes</label><input id="pay-day" type="number" min="1" max="28" value="1"></div>
+    </div>
+    <label class="check-row"><input type="checkbox" id="pay-flexible"> El monto varía (agua, luz, comida...) — me pregunta el monto real antes de confirmar</label>
+    <label class="check-row"><input type="checkbox" id="pay-cal" checked> Crear recordatorio mensual en Google Calendar</label>
+    <div class="mactions">
+      <button class="btn btn-red btn-sm" id="pay-delete" style="display:none;margin-right:auto" onclick="deletePayment()">Eliminar</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-pay')">Cancelar</button>
+      <button class="btn btn-acc" onclick="savePayment()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: confirmar pago -->
+<div class="overlay" id="m-confirm-pay">
+  <div class="modal">
+    <div class="mtitle" id="mcp-title">Confirmar pago</div>
+    <p style="font-size:.86rem;color:var(--text2);margin-bottom:14px" id="mcp-sub"></p>
+    <div class="field"><label>Monto pagado (₡)</label><input id="cp-amount" type="number" min="0"></div>
+    <div class="field"><label>Nota (opcional)</label><input id="cp-note" placeholder="ej. vino más caro este mes"></div>
+    <div class="mactions">
+      <button class="btn btn-ghost" onclick="closeModal('m-confirm-pay')">Cancelar</button>
+      <button class="btn btn-acc" onclick="confirmPayment()">✓ Registrar pago</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: tarea -->
+<div class="overlay" id="m-chore">
+  <div class="modal">
+    <div class="mtitle" id="mc-title">Nueva tarea</div>
+    <div class="field"><label>Tarea *</label><input id="c-name" placeholder="ej. Lavar ropa, Sacar basura"></div>
+    <div class="field"><label>¿Quién la hace?</label><input id="c-who" placeholder="ej. Peche, Mary, Ambos" list="people-list"><datalist id="people-list"></datalist></div>
+    <div class="field"><label>Días</label>
+      <div class="day-picker" id="c-days">
+        <button class="day-pick" data-d="1">L</button><button class="day-pick" data-d="2">K</button>
+        <button class="day-pick" data-d="3">M</button><button class="day-pick" data-d="4">J</button>
+        <button class="day-pick" data-d="5">V</button><button class="day-pick" data-d="6">S</button>
+        <button class="day-pick" data-d="0">D</button>
+      </div>
+    </div>
+    <div class="field"><label>Nota</label><input id="c-note" placeholder="opcional"></div>
+    <div class="mactions">
+      <button class="btn btn-red btn-sm" id="c-delete" style="display:none;margin-right:auto" onclick="deleteChore()">Eliminar</button>
+      <button class="btn btn-ghost" onclick="closeModal('m-chore')">Cancelar</button>
+      <button class="btn btn-acc" onclick="saveChore()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: compartir -->
+<div class="overlay" id="m-share">
+  <div class="modal">
+    <div class="mtitle">🤝 Compartir el hogar</div>
+    <div class="field"><label>Invitar por correo (le da acceso al archivo en Drive)</label>
+      <div style="display:flex;gap:8px"><input id="share-email" placeholder="correo@gmail.com" type="email">
+      <button class="btn btn-acc" style="flex-shrink:0" onclick="inviteEmail()">Invitar</button></div>
+    </div>
+    <div class="field"><label>File ID del hogar (la otra persona lo pega en "Unirme")</label>
+      <div class="code-box" id="share-fid" onclick="copyFid()" title="Clic para copiar">—</div>
+      <div class="hint">1) Invitá por correo. 2) Pasale este ID. 3) En su teléfono entra a la app, va a 🤝 y pega el ID en "Unirme a un hogar".</div>
+    </div>
+    <div class="field"><label>Unirme a un hogar existente</label>
+      <div style="display:flex;gap:8px"><input id="join-fid" placeholder="Pegá aquí el File ID">
+      <button class="btn btn-ghost" style="flex-shrink:0" onclick="joinHome()">Unirme</button></div>
+    </div>
+    <div class="section-label" style="margin-top:8px">Personas con acceso</div>
+    <div id="collab-list" style="font-size:.85rem;color:var(--text2)">—</div>
+    <div class="mactions"><button class="btn btn-ghost" onclick="closeModal('m-share')">Cerrar</button></div>
+  </div>
+</div>
+
+<div id="toast"><span id="t-icon">✓</span> <span id="t-msg"></span></div>
+
+<div id="bottomnav"><div class="bn-inner">
+  <button class="bn-tab" style="--tab-c:var(--green)" data-v="comida" onclick="go('comida')"><span class="nicon">🥑</span>Comida<span class="bn-dot" id="bnd-comida" style="display:none">0</span></button>
+  <button class="bn-tab" style="--tab-c:var(--blue)" data-v="productos" onclick="go('productos')"><span class="nicon">📦</span>Productos</button>
+  <button class="bn-tab" style="--tab-c:var(--amber)" data-v="pagos" onclick="go('pagos')"><span class="nicon">💸</span>Pagos<span class="bn-dot" id="bnd-pagos" style="display:none">0</span></button>
+  <button class="bn-tab" style="--tab-c:var(--pink)" data-v="tareas" onclick="go('tareas')"><span class="nicon">🧹</span>Tareas</button>
+</div></div>
+
+<script>
+// =====================
+// CONSTANTES
+// =====================
+const CLIENT_ID='812438874016-gjfjdc8thekv2rhuv9qqu9snlqhdqf1j.apps.googleusercontent.com';
+const SCOPES='https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/spreadsheets profile email';
+const FILE_NAME='nido_hogar.json';
+const DAYS_L=['D','L','K','M','J','V','S'];
+const DAYS_FULL=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const MONTHS=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','setiembre','octubre','noviembre','diciembre'];
+const CHORE_COLORS=['var(--pink)','var(--purple)','var(--teal)','var(--blue)','var(--amber)','var(--green)'];
+
+// =====================
+// ESTADO
+// =====================
+let S={
+  user:null, token:null, fileId:null,
+  data:{v:1, products:[], payments:[], chores:[], sheetId:null, shopChecked:{}},
+  editProduct:null, editPay:null, editChore:null, confirmCtx:null,
+  saveTimer:null
+};
+
+// =====================
+// TEMA
+// =====================
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('theme-btn').textContent = t==='dark'?'☀️':'🌙';
+  try{localStorage.setItem('nido_theme',t);}catch(e){}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  applyTheme(cur);
+}
+(function(){
+  let t='light';
+  try{t=localStorage.getItem('nido_theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}catch(e){}
+  applyTheme(t);
+})();
+
+// =====================
+// HELPERS
+// =====================
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const fmtMoney=n=>'₡'+Number(n||0).toLocaleString('es-CR');
+const ymNow=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');};
+function toast(msg,icon='✓'){
+  $('t-icon').textContent=icon;$('t-msg').textContent=msg;
+  $('toast').classList.add('show');
+  clearTimeout(toast._t);toast._t=setTimeout(()=>$('toast').classList.remove('show'),2800);
+}
+function openModal(id){$(id).classList.add('open');}
+function closeModal(id){$(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+async function api(url,opts={}){
+  opts.headers=Object.assign({Authorization:'Bearer '+S.token},opts.headers||{});
+  const r=await fetch(url,opts);
+  if(r.status===401){toast('Sesión expirada, entrá de nuevo','⚠️');setTimeout(()=>location.reload(),1800);throw new Error('401');}
+  return r;
+}
+
+// =====================
+// AUTH
+// =====================
+function handleLogin(){
+  google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPES,
+    callback:async r=>{
+      if(r.error){toast('Error: '+r.error,'❌');return;}
+      S.token=r.access_token;
+      await fetchUser();
+      await initData();
+      showApp();
+    }
+  }).requestAccessToken();
+}
+async function fetchUser(){
+  const r=await api('https://www.googleapis.com/oauth2/v3/userinfo');
+  S.user=await r.json();
+  $('auth-area').innerHTML=`<div id="user-pill" onclick="if(confirm('¿Cerrar sesión?'))location.reload()">
+    <img src="${S.user.picture||''}" onerror="this.style.display='none'"/>
+    <div><div class="uname">${esc((S.user.given_name||S.user.name||'').split(' ')[0])}</div><div class="uemail">${esc(S.user.email)}</div></div>
+  </div>`;
+}
+function showApp(){
+  $('splash').style.display='none';
+  $('mainnav').style.display='flex';
+  $('bottomnav').classList.add('on');
+  $('sync-btn').style.display='flex';
+  $('share-btn').style.display='flex';
+  go('comida');
+}
+
+// =====================
+// DRIVE: archivo compartido
+// =====================
+async function initData(){
+  // ¿Ya tenemos un fileId guardado localmente?
+  try{
+    const fid=localStorage.getItem('nido_fid');
+    if(fid){
+      const ok=await loadFromDrive(fid);
+      if(ok)return;
+    }
+  }catch(e){}
+  // Buscar el archivo en Drive (propio o compartido conmigo)
+  const r=await api(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}' and trashed=false&fields=files(id,name,modifiedTime,owners)&orderBy=modifiedTime desc`);
+  const d=await r.json();
+  if(d.files?.length){
+    await loadFromDrive(d.files[0].id);
+    return;
+  }
+  // No existe: crear archivo nuevo
+  await createDriveFile();
+}
+async function createDriveFile(){
+  const meta={name:FILE_NAME,mimeType:'application/json'};
+  const body=new FormData();
+  body.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
+  body.append('file',new Blob([JSON.stringify(S.data)],{type:'application/json'}));
+  const r=await api('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',body});
+  if(r.ok){const d=await r.json();S.fileId=d.id;try{localStorage.setItem('nido_fid',d.id);}catch(e){}
+    toast('Hogar creado en tu Drive 🏠');}
+  else toast('No se pudo crear el archivo','❌');
+}
+async function loadFromDrive(fid){
+  try{
+    const r=await api(`https://www.googleapis.com/drive/v3/files/${fid}?alt=media`);
+    if(!r.ok)return false;
+    const d=await r.json();
+    if(d&&typeof d==='object'){
+      S.data=Object.assign({v:1,products:[],payments:[],chores:[],sheetId:null,shopChecked:{}},d);
+      S.fileId=fid;
+      try{localStorage.setItem('nido_fid',fid);}catch(e){}
+      return true;
+    }
+  }catch(e){console.warn(e);}
+  return false;
+}
+function save(){
+  // Debounce: guarda en Drive 1.2s después del último cambio
+  renderAll();
+  clearTimeout(S.saveTimer);
+  S.saveTimer=setTimeout(saveToDrive,1200);
+}
+async function saveToDrive(){
+  if(!S.fileId||!S.token)return;
+  const body=new FormData();
+  body.append('metadata',new Blob([JSON.stringify({})],{type:'application/json'}));
+  body.append('file',new Blob([JSON.stringify(S.data)],{type:'application/json'}));
+  const r=await api(`https://www.googleapis.com/upload/drive/v3/files/${S.fileId}?uploadType=multipart`,{method:'PATCH',body});
+  if(!r.ok)toast('Error al respaldar en Drive','⚠️');
+}
+async function syncNow(){
+  $('sync-btn').textContent='…';
+  const ok=await loadFromDrive(S.fileId);
+  $('sync-btn').textContent='⟳';
+  if(ok){renderAll();toast('Sincronizado con Drive');}
+  else toast('No se pudo sincronizar','⚠️');
+}
+
+// =====================
+// COMPARTIR / UNIRSE
+// =====================
+function openShare(){
+  $('share-fid').textContent=S.fileId||'—';
+  renderCollabs();
+  openModal('m-share');
+}
+function copyFid(){
+  navigator.clipboard?.writeText(S.fileId).then(()=>toast('File ID copiado 📋'));
+}
+async function inviteEmail(){
+  const email=$('share-email').value.trim();
+  if(!email||!email.includes('@')){toast('Poné un correo válido','⚠️');return;}
+  const r=await api(`https://www.googleapis.com/drive/v3/files/${S.fileId}/permissions?sendNotificationEmail=true&emailMessage=${encodeURIComponent('Te invitaron al hogar en Nido 🏠. Abrí la app y pegá este File ID en "Unirme a un hogar": '+S.fileId)}`,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({role:'writer',type:'user',emailAddress:email})
+  });
+  if(r.ok){toast('Invitación enviada a '+email+' 💌');$('share-email').value='';renderCollabs();}
+  else toast('No se pudo invitar','❌');
+}
+async function joinHome(){
+  const fid=$('join-fid').value.trim();
+  if(!fid){toast('Pegá el File ID','⚠️');return;}
+  const ok=await loadFromDrive(fid);
+  if(ok){renderAll();closeModal('m-share');toast('¡Bienvenido al hogar! 🏠');}
+  else toast('No se encontró o no tenés acceso. ¿Ya te invitaron por correo?','❌');
+}
+async function renderCollabs(){
+  try{
+    const r=await api(`https://www.googleapis.com/drive/v3/files/${S.fileId}/permissions?fields=permissions(displayName,emailAddress,role,photoLink)`);
+    const d=await r.json();
+    $('collab-list').innerHTML=(d.permissions||[]).map(p=>{
+      const n=p.displayName||p.emailAddress||'?';
+      return `<div class="collab-row"><div class="av" style="background:var(--accent)">${esc(n.slice(0,2).toUpperCase())}</div>
+        <div><b>${esc(n)}</b><div style="font-size:.72rem;color:var(--text2)">${esc(p.emailAddress||'')} · ${p.role==='owner'?'dueño':'editor'}</div></div></div>`;
+    }).join('')||'—';
+  }catch(e){$('collab-list').textContent='No se pudo cargar';}
+}
+
+// =====================
+// NAVEGACIÓN
+// =====================
+function go(v){
+  document.querySelectorAll('.view').forEach(x=>x.style.display='none');
+  $('v-'+v).style.display='block';
+  document.querySelectorAll('.nav-tab,.bn-tab').forEach(t=>t.classList.toggle('active',t.dataset.v===v));
+  renderAll();
+}
+function renderAll(){
+  renderComida();renderProductos();renderPagos();renderTareas();updateBadges();
+}
+function updateBadges(){
+  const shop=shopItems().length;
+  const due=S.data.payments.filter(p=>!isPaid(p)&&dueStatus(p)!=='far').length;
+  [['nb-comida','bnd-comida',shop],['nb-pagos','bnd-pagos',due]].forEach(([a,b,n])=>{
+    [a,b].forEach(id=>{const el=$(id);el.textContent=n;el.style.display=n>0?'':'none';});
+  });
+}
+
+// =====================
+// PRODUCTOS
+// =====================
+function openProductModal(id){
+  S.editProduct=id||null;
+  const p=id?S.data.products.find(x=>x.id===id):null;
+  $('mp-title').textContent=p?'Editar producto':'Nuevo producto';
+  $('p-name').value=p?.name||'';
+  $('p-brand').value=p?.brand||'';
+  $('p-cat').value=p?.cat||'Comida';
+  $('p-unit').value=p?.unit||'';
+  $('p-qty').value=p?.qty??1;
+  $('p-min').value=p?.min??0;
+  $('p-delete').style.display=p?'':'none';
+  openModal('m-product');
+}
+function saveProduct(){
+  const name=$('p-name').value.trim();
+  if(!name){toast('El producto necesita nombre','⚠️');return;}
+  const obj={name,brand:$('p-brand').value.trim(),cat:$('p-cat').value,unit:$('p-unit').value.trim(),
+    qty:Math.max(0,parseInt($('p-qty').value)||0),min:Math.max(0,parseInt($('p-min').value)||0)};
+  if(S.editProduct){
+    Object.assign(S.data.products.find(x=>x.id===S.editProduct),obj);
+  }else{
+    S.data.products.push(Object.assign({id:uid()},obj));
+  }
+  closeModal('m-product');save();toast('Producto guardado');
+}
+function deleteProduct(){
+  if(!confirm('¿Eliminar este producto?'))return;
+  S.data.products=S.data.products.filter(x=>x.id!==S.editProduct);
+  closeModal('m-product');save();toast('Producto eliminado','🗑️');
+}
+function renderProductos(){
+  const q=($('prod-search').value||'').toLowerCase();
+  const g=$('prod-grid');g.innerHTML='';
+  const list=S.data.products.filter(p=>!q||p.name.toLowerCase().includes(q)||p.brand?.toLowerCase().includes(q));
+  if(!list.length){g.innerHTML='<div class="empty" style="grid-column:1/-1">No hay productos todavía. Agregá el primero ☝️</div>';return;}
+  const catIcons={Comida:'🥑',Limpieza:'🧴',Higiene:'🧼',Otro:'📦'};
+  list.forEach(p=>{
+    const c=document.createElement('div');c.className='card';
+    c.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div><div class="inv-name">${catIcons[p.cat]||'📦'} ${esc(p.name)}</div>
+      <div class="inv-brand">${esc(p.brand||'')}</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="openProductModal('${p.id}')">✏️</button></div>
+      <div style="font-size:.74rem;color:var(--text2);margin-top:8px">${esc(p.cat)}${p.unit?' · '+esc(p.unit):''} · mín: ${p.min}</div>`;
+    g.appendChild(c);
+  });
+}
+
+// =====================
+// COMIDA (inventario + compras)
+// =====================
+function shopItems(){return S.data.products.filter(p=>p.qty<=p.min);}
+function renderComida(){
+  // Lista de compras
+  const sl=$('shop-list');sl.innerHTML='';
+  const items=shopItems();
+  $('shop-count').textContent=items.length?`(${items.length})`:'';
+  if(!items.length){sl.innerHTML='<div class="empty">Nada por comprar. ¡Despensa llena! 🎉</div>';}
+  items.forEach(p=>{
+    const checked=S.data.shopChecked[p.id];
+    const el=document.createElement('div');el.className='shop-item'+(checked?' done':'');
+    el.onclick=()=>{toggleShopItem(p.id);};
+    el.innerHTML=`<div class="shop-check">${checked?'✓':''}</div>
+      <div style="flex:1"><div class="shop-name">${esc(p.name)}</div>
+      <div class="shop-meta">${esc(p.brand||'')}${p.unit?' · '+esc(p.unit):''}</div></div>
+      <span class="pill" style="background:rgba(214,90,74,.12);color:var(--red)">quedan ${p.qty}</span>`;
+    sl.appendChild(el);
+  });
+  // Inventario
+  const q=($('inv-search').value||'').toLowerCase();
+  const g=$('inv-grid');g.innerHTML='';
+  const list=S.data.products.filter(p=>!q||p.name.toLowerCase().includes(q)||p.brand?.toLowerCase().includes(q));
+  if(!list.length){g.innerHTML='<div class="empty" style="grid-column:1/-1">El inventario está vacío. Agregá productos en la pestaña 📦 Productos.</div>';return;}
+  list.forEach(p=>{
+    const cls=p.qty===0?'qty-zero':(p.qty<=p.min?'qty-low':'');
+    const c=document.createElement('div');c.className='card inv-card';
+    c.innerHTML=`<div class="inv-top"><div><div class="inv-name">${esc(p.name)}</div>
+      <div class="inv-brand">${esc(p.brand||'')}</div></div></div>
+      <div class="inv-qty-row">
+        <div class="stepper">
+          <button onclick="bump('${p.id}',-1)">−</button>
+          <span class="qty ${cls}">${p.qty}</span>
+          <button onclick="bump('${p.id}',1)">＋</button>
+        </div>
+        <span style="font-size:.72rem;color:var(--text3)">${esc(p.unit||'')}</span>
+      </div>`;
+    g.appendChild(c);
+  });
+}
+function bump(id,n){
+  const p=S.data.products.find(x=>x.id===id);if(!p)return;
+  p.qty=Math.max(0,p.qty+n);
+  if(p.qty>p.min)delete S.data.shopChecked[id];
+  save();
+}
+function toggleShopItem(id){
+  // Al marcar comprado: pregunta cuánto compró y repone inventario
+  if(S.data.shopChecked[id]){delete S.data.shopChecked[id];save();return;}
+  const p=S.data.products.find(x=>x.id===id);
+  const n=prompt(`¿Cuántos ${p.unit||'unidades'} de "${p.name}" compraron?`, Math.max(1,p.min+1));
+  if(n===null)return;
+  const qty=parseInt(n);
+  if(qty>0){p.qty+=qty;toast(`${p.name}: ahora hay ${p.qty} ✓`);}
+  else S.data.shopChecked[id]=true;
+  save();
+}
+
+// =====================
+// PAGOS
+// =====================
+function isPaid(p){return (p.history||[]).some(h=>h.ym===ymNow());}
+function dueStatus(p){
+  const today=new Date().getDate();
+  if(p.day<today-2)return 'late';
+  if(p.day<=today+3)return 'soon';
+  return 'far';
+}
+function openPayModal(id){
+  S.editPay=id||null;
+  const p=id?S.data.payments.find(x=>x.id===id):null;
+  $('mpay-title').textContent=p?'Editar pago':'Nuevo pago';
+  $('pay-name').value=p?.name||'';
+  $('pay-amount').value=p?.amount||'';
+  $('pay-day').value=p?.day||1;
+  $('pay-flexible').checked=p?.flexible||false;
+  $('pay-cal').checked=p?!!p.calId:true;
+  $('pay-delete').style.display=p?'':'none';
+  openModal('m-pay');
+}
+async function savePayment(){
+  const name=$('pay-name').value.trim();
+  const amount=parseFloat($('pay-amount').value)||0;
+  const day=Math.min(28,Math.max(1,parseInt($('pay-day').value)||1));
+  if(!name){toast('El pago necesita nombre','⚠️');return;}
+  const wantCal=$('pay-cal').checked;
+  let p;
+  if(S.editPay){
+    p=S.data.payments.find(x=>x.id===S.editPay);
+    Object.assign(p,{name,amount,day,flexible:$('pay-flexible').checked});
+  }else{
+    p={id:uid(),name,amount,day,flexible:$('pay-flexible').checked,calId:null,history:[]};
+    S.data.payments.push(p);
+  }
+  closeModal('m-pay');save();
+  if(wantCal&&!p.calId){
+    await createCalEvent(p);
+  }
+  toast('Pago guardado');
+}
+async function createCalEvent(p){
+  try{
+    const now=new Date();
+    let start=new Date(now.getFullYear(),now.getMonth(),p.day);
+    if(start<now)start=new Date(now.getFullYear(),now.getMonth()+1,p.day);
+    const dateStr=start.toISOString().slice(0,10);
+    const r=await api('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        summary:`💸 Pagar: ${p.name}`,
+        description:`Pago del hogar (Nido). Monto base: ${fmtMoney(p.amount)}${p.flexible?' (variable)':''}`,
+        start:{date:dateStr},end:{date:dateStr},
+        recurrence:[`RRULE:FREQ=MONTHLY;BYMONTHDAY=${p.day}`],
+        reminders:{useDefault:false,overrides:[{method:'popup',minutes:9*60},{method:'email',minutes:24*60}]}
+      })
+    });
+    if(r.ok){const d=await r.json();p.calId=d.id;save();toast('Recordatorio creado en Calendar 📅');}
+  }catch(e){console.warn(e);}
+}
+function deletePayment(){
+  if(!confirm('¿Eliminar este pago? (también borra el recordatorio de Calendar)'))return;
+  const p=S.data.payments.find(x=>x.id===S.editPay);
+  if(p?.calId){
+    api(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${p.calId}`,{method:'DELETE'}).catch(()=>{});
+  }
+  S.data.payments=S.data.payments.filter(x=>x.id!==S.editPay);
+  closeModal('m-pay');save();toast('Pago eliminado','🗑️');
+}
+function openConfirmPay(id){
+  const p=S.data.payments.find(x=>x.id===id);if(!p)return;
+  S.confirmCtx=id;
+  $('mcp-title').textContent='Confirmar: '+p.name;
+  $('mcp-sub').textContent=p.flexible
+    ?'Este pago es variable. Poné el monto real que pagaron este mes.'
+    :'Confirmá el pago de este mes. Podés ajustar el monto si fue distinto.';
+  $('cp-amount').value=p.amount;
+  $('cp-note').value='';
+  openModal('m-confirm-pay');
+}
+async function confirmPayment(){
+  const p=S.data.payments.find(x=>x.id===S.confirmCtx);if(!p)return;
+  const amount=parseFloat($('cp-amount').value)||0;
+  const note=$('cp-note').value.trim();
+  p.history=p.history||[];
+  p.history.push({ym:ymNow(),amount,note,date:new Date().toISOString().slice(0,10),by:(S.user.given_name||S.user.email)});
+  closeModal('m-confirm-pay');save();
+  toast(`${p.name} pagado: ${fmtMoney(amount)} ✓`);
+  appendToSheet(p,amount,note); // registra en el Excel compartido
+}
+function renderPagos(){
+  const g=$('pay-grid');g.innerHTML='';
+  const now=new Date();
+  $('pagos-sub').textContent=`${MONTHS[now.getMonth()].charAt(0).toUpperCase()+MONTHS[now.getMonth()].slice(1)} ${now.getFullYear()}`;
+  if(!S.data.payments.length){g.innerHTML='<div class="empty" style="grid-column:1/-1">Sin pagos definidos. Agregá el alquiler, internet, agua... 💡</div>';return;}
+  const sorted=[...S.data.payments].sort((a,b)=>a.day-b.day);
+  let totalMes=0;
+  sorted.forEach(p=>{
+    const paid=isPaid(p);
+    const st=dueStatus(p);
+    const last=(p.history||[]).slice(-1)[0];
+    if(paid)totalMes+=last.amount;
+    let badge='';
+    if(paid)badge=`<span class="pill paid-badge">✓ Pagado</span>`;
+    else if(st==='late')badge=`<span class="pill due-badge">¡Vencido!</span>`;
+    else if(st==='soon')badge=`<span class="pill soon-badge">Pronto</span>`;
+    const c=document.createElement('div');c.className='card pay-card';
+    c.innerHTML=`<div class="pay-top"><div>
+        <div class="pay-name">${esc(p.name)} ${p.flexible?'<span style="font-size:.66rem;color:var(--text3)">~variable</span>':''}</div>
+        <div class="pay-meta">📅 Día ${p.day} de cada mes ${p.calId?'· 🔔':''}</div>
+      </div>${badge}</div>
+      <div class="pay-amount">${fmtMoney(paid?last.amount:p.amount)}</div>
+      ${last&&!paid?`<div style="font-size:.7rem;color:var(--text3)">Último: ${fmtMoney(last.amount)} (${last.ym})</div>`:''}
+      <div class="pay-actions">
+        ${paid?'':`<button class="btn btn-acc btn-sm" onclick="openConfirmPay('${p.id}')">✓ Confirmar pago</button>`}
+        <button class="btn btn-ghost btn-sm" onclick="openPayModal('${p.id}')">✏️ Editar</button>
+      </div>`;
+    g.appendChild(c);
+  });
+  const tot=document.createElement('div');
+  tot.className='card';tot.style.gridColumn='1/-1';tot.style.background='var(--accent-soft)';tot.style.border='1px solid var(--accent)';
+  const pend=sorted.filter(p=>!isPaid(p)).reduce((s,p)=>s+(p.amount||0),0);
+  tot.innerHTML=`<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center">
+    <div><div style="font-size:.74rem;color:var(--text2);font-weight:700">PAGADO ESTE MES</div>
+    <div class="pay-amount" style="color:var(--accent)">${fmtMoney(totalMes)}</div></div>
+    <div style="text-align:right"><div style="font-size:.74rem;color:var(--text2);font-weight:700">PENDIENTE (estimado)</div>
+    <div class="pay-amount">${fmtMoney(pend)}</div></div></div>`;
+  g.appendChild(tot);
+}
+
+// =====================
+// SHEET DE FINANZAS
+// =====================
+async function ensureSheet(){
+  if(S.data.sheetId)return S.data.sheetId;
+  const r=await api('https://sheets.googleapis.com/v4/spreadsheets',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({properties:{title:'Nido 🏠 Finanzas del hogar'},
+      sheets:[{properties:{title:'Pagos'}}]})
+  });
+  if(!r.ok){toast('No se pudo crear el Sheet','❌');return null;}
+  const d=await r.json();
+  S.data.sheetId=d.spreadsheetId;
+  // Encabezados
+  await api(`https://sheets.googleapis.com/v4/spreadsheets/${S.data.sheetId}/values/Pagos!A1:append?valueInputOption=USER_ENTERED`,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({values:[['Fecha','Mes','Pago','Monto (₡)','Pagó','Nota']]})
+  });
+  // Compartir con los mismos colaboradores del archivo del hogar
+  try{
+    const pr=await api(`https://www.googleapis.com/drive/v3/files/${S.fileId}/permissions?fields=permissions(emailAddress,role)`);
+    const pd=await pr.json();
+    for(const perm of (pd.permissions||[])){
+      if(perm.emailAddress&&perm.emailAddress!==S.user.email&&perm.role!=='owner'){
+        await api(`https://www.googleapis.com/drive/v3/files/${S.data.sheetId}/permissions?sendNotificationEmail=false`,{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({role:'writer',type:'user',emailAddress:perm.emailAddress})
+        }).catch(()=>{});
+      }
+    }
+  }catch(e){}
+  save();
+  toast('Sheet de finanzas creado y compartido 📊');
+  return S.data.sheetId;
+}
+async function appendToSheet(p,amount,note){
+  try{
+    const sid=await ensureSheet();if(!sid)return;
+    await api(`https://sheets.googleapis.com/v4/spreadsheets/${sid}/values/Pagos!A1:append?valueInputOption=USER_ENTERED`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({values:[[new Date().toLocaleDateString('es-CR'),ymNow(),p.name,amount,(S.user.given_name||S.user.email),note||'']]})
+    });
+  }catch(e){console.warn('sheet append',e);}
+}
+async function openFinanzas(){
+  const sid=await ensureSheet();
+  if(sid)window.open(`https://docs.google.com/spreadsheets/d/${sid}`,'_blank');
+}
+
+// =====================
+// TAREAS
+// =====================
+let chorePickDays=new Set();
+document.querySelectorAll('#c-days .day-pick').forEach(b=>{
+  b.addEventListener('click',e=>{
+    e.preventDefault();
+    const d=parseInt(b.dataset.d);
+    if(chorePickDays.has(d)){chorePickDays.delete(d);b.classList.remove('sel');}
+    else{chorePickDays.add(d);b.classList.add('sel');}
+  });
+});
+function openChoreModal(id){
+  S.editChore=id||null;
+  const c=id?S.data.chores.find(x=>x.id===id):null;
+  $('mc-title').textContent=c?'Editar tarea':'Nueva tarea';
+  $('c-name').value=c?.name||'';
+  $('c-who').value=c?.who||'';
+  $('c-note').value=c?.note||'';
+  chorePickDays=new Set(c?.days||[]);
+  document.querySelectorAll('#c-days .day-pick').forEach(b=>b.classList.toggle('sel',chorePickDays.has(parseInt(b.dataset.d))));
+  $('c-delete').style.display=c?'':'none';
+  // sugerencias de personas
+  const people=[...new Set(S.data.chores.map(x=>x.who).filter(Boolean))];
+  $('people-list').innerHTML=people.map(p=>`<option value="${esc(p)}">`).join('');
+  openModal('m-chore');
+}
+function saveChore(){
+  const name=$('c-name').value.trim();
+  if(!name){toast('La tarea necesita nombre','⚠️');return;}
+  const obj={name,who:$('c-who').value.trim(),note:$('c-note').value.trim(),days:[...chorePickDays]};
+  if(S.editChore)Object.assign(S.data.chores.find(x=>x.id===S.editChore),obj);
+  else S.data.chores.push(Object.assign({id:uid()},obj));
+  closeModal('m-chore');save();toast('Tarea guardada');
+}
+function deleteChore(){
+  if(!confirm('¿Eliminar esta tarea?'))return;
+  S.data.chores=S.data.chores.filter(x=>x.id!==S.editChore);
+  closeModal('m-chore');save();toast('Tarea eliminada','🗑️');
+}
+function choreColor(who){
+  if(!who)return CHORE_COLORS[0];
+  const people=[...new Set(S.data.chores.map(x=>x.who).filter(Boolean))];
+  return CHORE_COLORS[Math.max(0,people.indexOf(who))%CHORE_COLORS.length];
+}
+function renderTareas(){
+  const wg=$('week-grid');wg.innerHTML='';
+  const todayD=new Date().getDay();
+  const order=[1,2,3,4,5,6,0]; // L a D
+  order.forEach(d=>{
+    const chores=S.data.chores.filter(c=>(c.days||[]).includes(d));
+    const col=document.createElement('div');
+    col.className='day-col'+(d===todayD?' today':'')+(chores.length?' has-chores':'');
+    col.innerHTML=`<div class="day-head">${DAYS_FULL[d]}${d===todayD?' · hoy':''}</div>`+
+      chores.map(c=>`<div class="chore-chip" style="background:${choreColor(c.who)}" onclick="openChoreModal('${c.id}')">
+        ${esc(c.name)}${c.who?`<span class="who">👤 ${esc(c.who)}</span>`:''}</div>`).join('');
+    wg.appendChild(col);
+  });
+  const cl=$('chore-list');cl.innerHTML='';
+  if(!S.data.chores.length){cl.innerHTML='<div class="empty">Sin tareas definidas. ¿Quién lava hoy? 🧺</div>';return;}
+  S.data.chores.forEach(c=>{
+    const el=document.createElement('div');el.className='chore-list-item';
+    el.innerHTML=`<div><b style="font-size:.9rem">${esc(c.name)}</b>
+      <div style="font-size:.74rem;color:var(--text2)">${c.who?'👤 '+esc(c.who)+' · ':''}${(c.days||[]).map(d=>DAYS_L[d]).join(', ')||'sin días'}${c.note?' · '+esc(c.note):''}</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="openChoreModal('${c.id}')">✏️</button>`;
+    cl.appendChild(el);
+  });
+}
+</script>
+
+</body>
+</html>
