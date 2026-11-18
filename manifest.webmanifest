@@ -10,13 +10,59 @@
   "background_color": "#f7f4ed",
   "theme_color": "#2e7a5c",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "Escanear", "short_name": "Escanear", "url": "./?a=scan", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
-    { "name": "Se acabó algo", "short_name": "Se acabó", "url": "./?a=gone", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
-    { "name": "Lo que falta", "short_name": "Falta", "url": "./?v=falta", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
-  ]
+    {
+      "name": "Escanear",
+      "short_name": "Escanear",
+      "url": "./?a=scan",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Se acabó algo",
+      "short_name": "Se acabó",
+      "url": "./?a=gone",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Lo que falta",
+      "short_name": "Falta",
+      "url": "./?v=falta",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "id": "./"
 }

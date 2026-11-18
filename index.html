@@ -8,9 +8,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Nido">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" id="l-manifest" href="manifest.webmanifest">
+<link rel="icon" id="l-icon" href="icon-192.png">
+<link rel="apple-touch-icon" id="l-apple" href="apple-touch-icon.png">
+<script>try{var b=localStorage.getItem("nido_brand_slug");if(b&&b!=="verde"){document.getElementById("l-manifest").href="manifest-"+b+".webmanifest";document.getElementById("l-icon").href="icons/"+b+"-192.png";document.getElementById("l-apple").href="icons/"+b+"-apple.png";}var c=localStorage.getItem("nido_brand");if(c)document.documentElement.style.setProperty("--brand",c);}catch(e){}</script>
 <title>Nido · Hogar</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,8 +21,8 @@
    TOKENS DE DISEÑO
    ========================================================= */
 :root{
-  --bg:#f6f5f1;--surface:#ffffff;--surface2:#f0eee8;--surface3:#e6e3da;
-  --line:#e9e6de;--line2:#d9d5ca;
+  --bg:color-mix(in srgb,var(--brand) 6%,#f7f6f2);--surface:color-mix(in srgb,var(--brand) 1.5%,#fff);--surface2:color-mix(in srgb,var(--brand) 7%,#f1efea);--surface3:color-mix(in srgb,var(--brand) 11%,#e7e4dc);
+  --line:color-mix(in srgb,var(--brand) 8%,#e9e6de);--line2:color-mix(in srgb,var(--brand) 12%,#d9d5ca);
   --text:#1d1c19;--text2:#67635a;--text3:#9f9b90;
   --brand:#2e7a5c;--accent:var(--brand);--accent-ink:#ffffff;--accent-soft:color-mix(in srgb,var(--accent) 13%,var(--surface));--accent-text:color-mix(in srgb,var(--accent) 82%,#000);
   --red:#c4483a;--red-soft:#f8e6e3;--amber:#a86d0c;--amber-soft:#f6ecd8;
@@ -32,8 +33,8 @@
   --nav-h:64px;--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
 }
 html[data-theme="dark"]{
-  --bg:#101113;--surface:#18191c;--surface2:#212226;--surface3:#2b2d32;
-  --line:#26282c;--line2:#34363c;
+  --bg:color-mix(in srgb,var(--brand) 8%,#0f1012);--surface:color-mix(in srgb,var(--brand) 9%,#17181b);--surface2:color-mix(in srgb,var(--brand) 11%,#202125);--surface3:color-mix(in srgb,var(--brand) 14%,#2a2c31);
+  --line:color-mix(in srgb,var(--brand) 10%,#25272b);--line2:color-mix(in srgb,var(--brand) 14%,#33353b);
   --text:#ececea;--text2:#a3a29c;--text3:#6c6b66;
   --accent:color-mix(in srgb,var(--brand) 68%,#fff);--accent-ink:#0f1210;--accent-soft:color-mix(in srgb,var(--accent) 16%,var(--surface));--accent-text:color-mix(in srgb,var(--accent) 85%,#fff);
   --red:#ee7d6c;--red-soft:#3a2420;--amber:#e3ae4c;--amber-soft:#36301f;
@@ -410,7 +411,7 @@ main{max-width:820px;margin:0 auto;padding:4px 16px calc(var(--nav-h) + var(--sa
 .g-panel h3{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:500;}
 .g-panel p{color:#67635a;margin:8px 0 18px;line-height:1.45;}
 .g-panel .btn-quiet{background:#f0eee8;color:#1d1c19;}
-.g-panel .btn-primary{background:#2e7a5c;color:#fff;}
+.g-panel .btn-primary{background:var(--brand);color:#fff;}
 .g-big{font-family:'Fraunces',serif;font-size:2.6rem;color:#1d1c19;}
 .g-week{background:#f0eee8;border-radius:12px;padding:10px 12px;font-size:.88rem;color:#1d1c19;margin-bottom:16px;text-align:left;}
 .g-hint{position:absolute;bottom:calc(26px + var(--safe-b));left:0;right:0;text-align:center;color:#2e5a48;font-weight:600;font-size:.92rem;z-index:2;pointer-events:none;}
@@ -489,7 +490,7 @@ body.locked #toast.show{transform:translateX(-50%) translateY(0);}
 </svg>
 
 <header id="topbar">
-  <div class="logo"><img src="icon-192.png" alt="">Nido</div>
+  <div class="logo"><img class="brand-icon" src="icon-192.png" alt="">Nido</div>
   <nav class="desk-nav" aria-label="Secciones">
     <button class="desk-tab" data-v="falta" onclick="go('falta')"><svg class="ic sm"><use href="#i-cart"/></svg>Falta</button>
     <button class="desk-tab" data-v="hoy" onclick="go('hoy')"><svg class="ic sm"><use href="#i-today"/></svg>Hoy</button>
@@ -505,7 +506,7 @@ body.locked #toast.show{transform:translateX(-50%) translateY(0);}
 
 <!-- BIENVENIDA -->
 <section id="splash">
-  <img class="big" src="icon-512.png" alt="">
+  <img class="big brand-icon" data-size="512" src="icon-512.png" alt="">
   <h1>El hogar,<br>organizado entre dos</h1>
   <p>Lo que falta en la casa, los pagos del mes y las tareas, guardados en su Drive.</p>
   <button class="btn btn-primary" style="min-height:54px;padding:0 28px;font-size:1rem" onclick="login()"><svg class="ic sm"><use href="#i-google"/></svg>Entrar con Google</button>
@@ -694,6 +695,7 @@ body.locked #toast.show{transform:translateX(-50%) translateY(0);}
   <button class="mrow" onclick="closeModal('m-menu');openAccount()"><span class="mi"><svg class="ic sm"><use href="#i-bank"/></svg></span><span class="ml">Cuenta común</span><svg class="ic sm mr"><use href="#i-chev"/></svg></button>
   <button class="mrow" onclick="closeModal('m-menu');openHistory()"><span class="mi"><svg class="ic sm"><use href="#i-chart"/></svg></span><span class="ml">Historial de pagos</span><svg class="ic sm mr"><use href="#i-chev"/></svg></button>
   <button class="mrow" onclick="closeModal('m-menu');openGame()"><span class="mi"><svg class="ic sm"><use href="#i-trophy"/></svg></span><span class="ml">Reto Salto Nido</span><svg class="ic sm mr"><use href="#i-chev"/></svg></button>
+  <button class="mrow" onclick="togglePush()"><span class="mi"><svg class="ic sm"><use href="#i-chat"/></svg></span><span class="ml">Notificaciones de la casa</span><span class="mr" id="push-state"></span></button>
   <button class="mrow" onclick="toggleDaily()"><span class="mi"><svg class="ic sm"><use href="#i-bell"/></svg></span><span class="ml">Aviso diario de lo que toca</span><span class="mr" id="daily-state"></span></button>
   <button class="mrow" onclick="syncNow()"><span class="mi"><svg class="ic sm"><use href="#i-sync"/></svg></span><span class="ml">Sincronizar</span><span class="mr" id="sync-state"></span></button>
   <div class="mrow" style="flex-wrap:wrap;cursor:default"><span class="mi"><svg class="ic sm"><use href="#i-spark"/></svg></span><span class="ml">Color de la app</span>
@@ -710,6 +712,14 @@ body.locked #toast.show{transform:translateX(-50%) translateY(0);}
   <div class="ssub">Queda en tu pantalla de inicio y abre a pantalla completa, como cualquier app.</div>
   <div id="install-steps" class="steps"></div>
   <div class="sfoot"><button class="btn btn-primary" onclick="closeModal('m-install')">Entendido</button></div>
+</div></div>
+
+<div class="overlay" id="m-push"><div class="sheet" role="dialog">
+  <div class="grab"></div>
+  <div style="width:56px;height:56px;border-radius:16px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:14px"><svg class="ic" style="width:28px;height:28px"><use href="#i-bell"/></svg></div>
+  <div class="stitle" id="push-title">Activá las notificaciones</div>
+  <div class="ssub" id="push-text">Así te llega al teléfono cuando la otra persona te deja un mensajito, cuando algo se acaba o cuando termina una tarea.</div>
+  <div class="sfoot" id="push-foot"><button class="btn btn-quiet" onclick="pushLater()">Ahora no</button><button class="btn btn-primary" onclick="enablePush()">Activar</button></div>
 </div></div>
 
 <div class="overlay" id="m-notif"><div class="sheet" role="dialog">
@@ -752,7 +762,8 @@ body.locked #toast.show{transform:translateX(-50%) translateY(0);}
     <textarea id="msg-text" placeholder="Escribí un mensajito" rows="1"></textarea>
     <button class="go" onclick="sendMessage()" aria-label="Enviar"><svg class="ic"><use href="#i-send"/></svg></button>
   </div>
-  <label class="switch"><span>Avisarle por correo</span><input type="checkbox" id="msg-email" checked></label>
+  <label class="switch"><span>También avisar por correo</span><input type="checkbox" id="msg-email" onchange="ls.set('nido_msgmail',this.checked?'1':'')"></label>
+  <div class="hint" style="margin-top:0">Los mensajitos llegan como notificación y se borran solos después de una semana.</div>
 </div></div>
 
 <div class="overlay" id="m-history"><div class="sheet" role="dialog">
@@ -796,7 +807,7 @@ body.locked #toast.show{transform:translateX(-50%) translateY(0);}
   <button class="onb-skip" onclick="endOnb()">Saltar</button>
   <div class="onb-track" id="onb-track">
     <div class="onb-slide" style="--kc:var(--accent)">
-      <div class="onb-art"><img src="icon-512.png" alt=""><span class="fchip" style="top:8%;left:-6%"><svg class="ic"><use href="#i-heart"/></svg>En equipo</span><span class="fchip" style="bottom:10%;right:-8%"><svg class="ic"><use href="#i-check"/></svg>Sin enredos</span></div>
+      <div class="onb-art"><img class="brand-icon" data-size="512" src="icon-512.png" alt=""><span class="fchip" style="top:8%;left:-6%"><svg class="ic"><use href="#i-heart"/></svg>En equipo</span><span class="fchip" style="bottom:10%;right:-8%"><svg class="ic"><use href="#i-check"/></svg>Sin enredos</span></div>
       <h2>La casa, en equipo</h2>
       <p>Nido les ayuda a organizar el hogar entre los dos, para que nadie cargue solo con todo y la convivencia sea más tranquila.</p>
     </div>
@@ -844,8 +855,8 @@ const MONTHS=['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
 const PEOPLE_COLORS=['var(--pink)','var(--purple)','var(--teal)','var(--blue)','var(--amber)','var(--accent)'];
 const CAT_ORDER=['Comida','Limpieza','Higiene','Otro'];
 const TABS=['falta','hoy','pagos','tareas'];
-const COLS=['products','payments','chores','todos','messages','contrib','log','scores'];
-const EMPTY=()=>({v:1,products:[],payments:[],chores:[],sheetId:null,shopChecked:{},contrib:[],todos:[],messages:[],choreDone:{},deleted:{},log:[],scores:[]});
+const COLS=['products','payments','chores','todos','messages','contrib','log','scores','subs'];
+const EMPTY=()=>({v:1,products:[],payments:[],chores:[],sheetId:null,shopChecked:{},contrib:[],todos:[],messages:[],choreDone:{},deleted:{},log:[],scores:[],subs:[],vapid:null});
 
 let S={
   user:null,token:null,tokExp:0,fileId:null,data:EMPTY(),
@@ -912,17 +923,30 @@ function ask(title,text,yes='Sí',danger=false){
 // ---- Tema ----
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme',t);
-  document.querySelector('meta[name=theme-color]').content=t==='dark'?'#101113':'#f6f5f1';
+  if(typeof syncThemeColor==='function')syncThemeColor();
   $('theme-ic').setAttribute('href',t==='dark'?'#i-sun':'#i-moon');$('theme-lb').textContent=t==='dark'?'Modo claro':'Modo oscuro';
   ls.set('nido_theme',t);
 }
 function toggleTheme(){applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');}
 applyTheme(ls.get('nido_theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
-const BRANDS=[['Verde','#2e7a5c'],['Azul','#3d6fc2'],['Morado','#7259b8'],['Rosado','#b8487c'],['Terracota','#c0612f'],['Grafito','#4a5562']];
-function applyBrand(c){document.documentElement.style.setProperty('--brand',c);ls.set('nido_brand',c);renderSwatches();}
+const BRANDS=[['Verde','#2e7a5c','verde'],['Azul','#3d6fc2','azul'],['Morado','#7259b8','morado'],['Rosado','#b8487c','rosado'],['Terracota','#c0612f','terracota'],['Grafito','#4a5562','grafito']];
+function brandSlug(){return ls.get('nido_brand_slug')||'verde';}
+function brandIcon(size){const s=brandSlug();return size===512?`icons/${s}-512.png`:`icons/${s}-192.png`;}
+function applyBrand(c){
+  const b=BRANDS.find(x=>x[1]===c)||BRANDS[0];
+  document.documentElement.style.setProperty('--brand',b[1]);ls.set('nido_brand',b[1]);ls.set('nido_brand_slug',b[2]);
+  // Ícono, manifiesto (ícono al instalar) y barra de estado del teléfono
+  $('l-manifest').href=`manifest-${b[2]}.webmanifest`;$('l-icon').href=`icons/${b[2]}-192.png`;$('l-apple').href=`icons/${b[2]}-apple.png`;
+  document.querySelectorAll('.brand-icon').forEach(i=>i.src=brandIcon(+i.dataset.size||192));
+  syncThemeColor();renderSwatches();
+}
+function toHex(c){const n=(c.match(/[\d.]+/g)||[]).map(Number);if(n.length<3)return '#f6f5f1';const f=c.startsWith('color(')?255:1;
+  return '#'+n.slice(0,3).map(v=>Math.round(Math.min(255,v*f)).toString(16).padStart(2,'0')).join('');}
+function syncThemeColor(){requestAnimationFrame(()=>{document.querySelector('meta[name=theme-color]').content=toHex(getComputedStyle(document.body).backgroundColor);});}
 function renderSwatches(){const el=$('swatches');if(!el)return;const cur=ls.get('nido_brand')||BRANDS[0][1];
-  el.innerHTML=BRANDS.map(([n,c])=>`<button class="swatch${c===cur?' on':''}" style="--c:${c}" onclick="applyBrand('${c}');buzz(8)" aria-label="${n}" title="${n}"></button>`).join('');}
-if(ls.get('nido_brand'))document.documentElement.style.setProperty('--brand',ls.get('nido_brand'));
+  el.innerHTML=BRANDS.map(([n,c,s])=>`<button class="swatch${c===cur?' on':''}" style="--c:${c}" onclick="applyBrand('${c}');buzz(8)" aria-label="${n}" title="${n}"></button>`).join('');}
+if(ls.get('nido_brand_slug'))document.querySelectorAll('.brand-icon').forEach(i=>i.src=brandIcon(+i.dataset.size||192));
+syncThemeColor();
 function confetti(x,y){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const cols=['var(--accent)','var(--amber)','var(--pink)','var(--blue)','var(--teal)'];
@@ -947,6 +971,7 @@ function merge(remote,local){
   remote=normalize(remote);local=normalize(local);
   const out=Object.assign({},remote,local);
   out.sheetId=local.sheetId||remote.sheetId||null;
+  out.vapid=remote.vapid||local.vapid||null; // la llave del hogar: gana la primera que se guardó
   const del=Object.assign({},remote.deleted,local.deleted);out.deleted=del;
   COLS.forEach(k=>{
     const map=new Map();
@@ -967,6 +992,9 @@ function prune(){
   const old=Date.now()-60*86400000;
   Object.entries(S.data.deleted).forEach(([k,v])=>{if(v<old)delete S.data.deleted[k];});
   const lim90=ymd(new Date(Date.now()-90*86400000));
+  // El chat se limpia solo: quedan los mensajitos de los últimos 7 días
+  const lim7=new Date(Date.now()-7*86400000).toISOString();
+  S.data.messages=S.data.messages.filter(m=>(m.date||'')>=lim7);
   S.data.log=S.data.log.filter(x=>(x.date||'')>=lim90);
   // Puntajes: se guardan los de 90 días y el mejor histórico de cada persona
   const keep=new Set();const bestBy={};
@@ -1083,6 +1111,7 @@ async function connect(){
   try{
     if(!S.user?.email)await fetchUser();else fetchUser().catch(()=>{});
     await initData();setStatus(S.dirty?'pending':'ok');renderAll();
+    if(!ls.get('nido_push_off'))setupPush();
   }catch(e){console.warn(e);setStatus(canSync()?'pending':'off');}
 }
 async function logout(){
@@ -1336,7 +1365,7 @@ function bump(id,n){
 }
 function markGone(id){
   const p=S.data.products.find(x=>x.id===id);if(!p)return;
-  const prev=p.qty;p.qty=0;touch(p);S.data.shopChecked[id]=false;buzz(25);save();
+  const prev=p.qty;p.qty=0;touch(p);S.data.shopChecked[id]=false;buzz(25);save();queuePush('gone',p.name);
   toast(`${p.name} pasó a la lista`,{label:'Deshacer',fn:()=>{p.qty=prev;touch(p);save();}});
 }
 function clearChecked(){
@@ -1395,7 +1424,7 @@ function goneEnter(){
 function goneNew(){
   const name=$('gone-q').value.trim();if(!name)return;
   const p=touch({id:uid(),name,brand:'',cat:'Comida',unit:'',qty:0,min:0,code:''});
-  S.data.products.push(p);closeModal('m-gone');buzz(25);save();
+  S.data.products.push(p);closeModal('m-gone');buzz(25);save();queuePush('gone',name);
   toast(`${name} pasó a la lista`,{label:'Detalles',fn:()=>openProductModal(p.id)});
 }
 function openProductModal(id,pre={}){
@@ -1414,8 +1443,10 @@ function saveProduct(){
   const obj={name,brand:$('p-brand').value.trim(),cat:$('p-cat').value,unit:$('p-unit').value.trim(),
     qty:Math.max(0,parseInt($('p-qty').value)||0),min:Math.max(0,parseInt($('p-min').value)||0),code:$('p-code').value.trim()};
   if(obj.code){const dup=S.data.products.find(x=>x.code===obj.code&&x.id!==S.editProduct);if(dup){toast(`Ese código ya es de «${dup.name}»`);return;}}
+  const prevQty=S.editProduct?S.data.products.find(x=>x.id===S.editProduct)?.qty:null;
   if(S.editProduct){touch(Object.assign(S.data.products.find(x=>x.id===S.editProduct),obj));if(obj.qty>obj.min)S.data.shopChecked[S.editProduct]=false;}
   else S.data.products.push(touch(Object.assign({id:uid()},obj)));
+  if(obj.qty===0&&(!prevQty||prevQty>0))queuePush('gone',name);
   closeModal('m-product');save();toast(obj.qty<=obj.min?`${name} está en la lista`:'Producto guardado');
 }
 async function deleteProduct(){
@@ -1607,7 +1638,7 @@ function fmtDue(due){
 }
 function choreDoneToday(id){return (S.data.choreDone[todayStr()]||[]).includes(id);}
 function toggleChoreDone(id){const t=todayStr();const arr=S.data.choreDone[t]=S.data.choreDone[t]||[];const i=arr.indexOf(id);const c=S.data.chores.find(x=>x.id===id);
-  if(i>=0){arr.splice(i,1);removePoints('ch-'+id+'-'+t);}else{arr.push(id);buzz(20);addPoints('ch-'+id+'-'+t,'chore',c?.name||'Tarea');celebrate('+10 · ¡gracias por ayudar!');}save();}
+  if(i>=0){arr.splice(i,1);removePoints('ch-'+id+'-'+t);}else{arr.push(id);buzz(20);addPoints('ch-'+id+'-'+t,'chore',c?.name||'Tarea');queuePush('done',c?.name||'una tarea');celebrate('+10 · ¡gracias por ayudar!');}save();}
 function celebrate(msg){confetti(lastTap.x,lastTap.y);toast(msg);
   if(hoyCount()===0&&S.view==='hoy')setTimeout(()=>{confetti(innerWidth/2,innerHeight/3);toast('¡Todo lo de hoy está listo! 🎉');},900);}
 function hoyRow(o){
@@ -1693,7 +1724,7 @@ function confirmPayment(){
   const p=S.data.payments.find(x=>x.id===S.confirmCtx);if(!p)return;
   const amount=parseFloat($('cp-amount').value)||0,note=$('cp-note').value.trim(),common=$('cp-common').checked;
   p.history=p.history||[];p.history.push({ym:ymNow(),amount,note,common,date:todayStr(),by:myName()});touch(p);
-  addPoints('pay-'+p.id+'-'+ymNow(),'pay',p.name);closeModal('m-confirm-pay');buzz(20);save();toast(`${p.name} pagado · +5`);
+  addPoints('pay-'+p.id+'-'+ymNow(),'pay',p.name);queuePush('paid',p.name);closeModal('m-confirm-pay');buzz(20);save();toast(`${p.name} pagado · +5`);
   if(canSync())appendToSheet(p,amount,note,common);
 }
 function renderPagos(){
@@ -1889,7 +1920,7 @@ function renderHistory(){
 // =====================================================
 // MENSAJITOS
 // =====================================================
-function openMessages(){
+function openMessages(){$('msg-email').checked=!!ls.get('nido_msgmail');
   let changed=false;
   S.data.messages.forEach(m=>{m.readBy=m.readBy||[];if(S.user&&!m.readBy.includes(S.user.email)){m.readBy.push(S.user.email);touch(m);changed=true;}});
   if(changed)save();else updateBadges();
@@ -1916,9 +1947,10 @@ async function sendMessage(){
 async function postMessage(text,mail){
   const m=touch({id:uid(),text,date:new Date().toISOString(),by:myName(),byEmail:S.user?.email,readBy:[S.user?.email],mailed:false});
   S.data.messages.push(m);save();renderMessages();const board=$('msg-board');board.scrollTop=board.scrollHeight;
+  pushTo({title:'💌 '+myName(),body:text,url:'./?a=msgs',tag:'nido-msg'});
   if(mail&&canSync()){
     const emails=await partnerEmails();
-    if(!emails.length){toast('Guardado. Compartí el hogar para poder avisar por correo.');return;}
+    if(!emails.length)return;
     let ok=false;
     for(const to of emails)ok=(await gmailSend(to,`${m.by} te dejó un mensajito en Nido`,`${m.text}\n\n—\n${m.by} te dejó este mensajito en Nido.\nEntrá a la app para responderle.`))||ok;
     if(ok){m.mailed=true;touch(m);save();renderMessages();toast('Enviado y avisado por correo');}else toast('Guardado, pero el correo no salió');
@@ -1931,6 +1963,140 @@ async function gmailSend(to,subject,body){
     const r=await api('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({raw})});
     return r.ok;}catch(e){return false;}
 }
+
+// =====================================================
+// NOTIFICACIONES AL OTRO TELÉFONO (Web Push cifrado)
+//  La app arma y cifra el aviso; el Apps Script (AUTH_URL) solo lo entrega.
+// =====================================================
+const b64u={enc:buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''),
+  dec:s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return Uint8Array.from(atob(s),c=>c.charCodeAt(0));}};
+const te=new TextEncoder();
+const cat=(...a)=>{const o=new Uint8Array(a.reduce((s,x)=>s+x.length,0));let i=0;a.forEach(x=>{o.set(x,i);i+=x.length;});return o;};
+async function hkdf(salt,ikm,info,len){const k=await crypto.subtle.importKey('raw',ikm,'HKDF',false,['deriveBits']);
+  return new Uint8Array(await crypto.subtle.deriveBits({name:'HKDF',hash:'SHA-256',salt,info},k,len*8));}
+const pushSupported=()=>'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window&&window.isSecureContext;
+
+async function ensureVapid(){
+  if(S.data.vapid?.pub)return S.data.vapid;
+  const kp=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
+  S.data.vapid={pub:b64u.enc(await crypto.subtle.exportKey('raw',kp.publicKey)),jwk:await crypto.subtle.exportKey('jwk',kp.privateKey)};
+  save();await pushRemote();
+  return S.data.vapid;
+}
+async function vapidHeader(endpoint){
+  const v=S.data.vapid;
+  const key=await crypto.subtle.importKey('jwk',v.jwk,{name:'ECDSA',namedCurve:'P-256'},false,['sign']);
+  const head=b64u.enc(te.encode(JSON.stringify({typ:'JWT',alg:'ES256'})));
+  const claims=b64u.enc(te.encode(JSON.stringify({aud:new URL(endpoint).origin,exp:Math.floor(Date.now()/1000)+12*3600,sub:'mailto:'+(S.user?.email||'nido@example.com')})));
+  const sig=await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},key,te.encode(head+'.'+claims));
+  return `vapid t=${head}.${claims}.${b64u.enc(sig)}, k=${v.pub}`;
+}
+async function encryptPush(sub,text){ // RFC 8291 (aes128gcm)
+  const uaPub=b64u.dec(sub.keys.p256dh),auth=b64u.dec(sub.keys.auth);
+  const as=await crypto.subtle.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
+  const asPub=new Uint8Array(await crypto.subtle.exportKey('raw',as.publicKey));
+  const uaKey=await crypto.subtle.importKey('raw',uaPub,{name:'ECDH',namedCurve:'P-256'},false,[]);
+  const ecdh=new Uint8Array(await crypto.subtle.deriveBits({name:'ECDH',public:uaKey},as.privateKey,256));
+  const ikm=await hkdf(auth,ecdh,cat(te.encode('WebPush: info\0'),uaPub,asPub),32);
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  const cek=await hkdf(salt,ikm,te.encode('Content-Encoding: aes128gcm\0'),16);
+  const nonce=await hkdf(salt,ikm,te.encode('Content-Encoding: nonce\0'),12);
+  const k=await crypto.subtle.importKey('raw',cek,'AES-GCM',false,['encrypt']);
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv:nonce},k,cat(te.encode(text),new Uint8Array([2]))));
+  const hdr=new Uint8Array(21);hdr.set(salt,0);new DataView(hdr.buffer).setUint32(16,4096);hdr[20]=65;
+  return cat(hdr,asPub,ct);
+}
+async function pushTo(payload){
+  if(!AUTH_URL||!S.data.vapid||!canSync())return;
+  const me=S.user?.email;
+  const targets=S.data.subs.filter(s=>s.email&&s.email!==me);
+  for(const t of targets){
+    try{
+      const body=await encryptPush(t.sub,JSON.stringify(payload));
+      const r=await authPost({action:'push',endpoint:t.sub.endpoint,body:btoa(String.fromCharCode(...body)),
+        headers:{Authorization:await vapidHeader(t.sub.endpoint),TTL:'86400',Urgency:'high','Content-Encoding':'aes128gcm'}});
+      if(r&&(r.status===404||r.status===410)){tomb(t.id);S.data.subs=S.data.subs.filter(x=>x.id!==t.id);save();}
+    }catch(e){console.warn('push',e);}
+  }
+}
+// Varios avisos seguidos se juntan en uno solo
+const pq={gone:[],done:[],paid:[],t:null};
+function queuePush(kind,text){pq[kind].push(text);clearTimeout(pq.t);pq.t=setTimeout(flushPush,12000);}
+function flushPush(){
+  clearTimeout(pq.t);pq.t=null;const n=myName();
+  const list=a=>a.slice(0,5).join(', ')+(a.length>5?` y ${a.length-5} más`:'');
+  if(pq.gone.length)pushTo({title:`🛒 Se acabó: ${list(pq.gone)}`,body:`${n} lo anotó en la lista de compras.`,url:'./?v=falta',tag:'nido-falta'});
+  if(pq.done.length)pushTo({title:`✅ ${n} terminó: ${list(pq.done)}`,body:'+10 puntos para el equipo 💪',url:'./?v=hoy',tag:'nido-hecho'});
+  if(pq.paid.length)pushTo({title:`💸 Pagado: ${list(pq.paid)}`,body:`${n} registró el pago.`,url:'./?v=pagos',tag:'nido-pago'});
+  pq.gone=[];pq.done=[];pq.paid=[];
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&pq.t)flushPush();});
+
+async function setupPush(){
+  if(!pushSupported()||Notification.permission!=='granted'||!S.user||S.status!=='ok')return;
+  try{
+    const reg=await navigator.serviceWorker.ready;const v=await ensureVapid();
+    let sub=await reg.pushManager.getSubscription();
+    if(sub&&sub.options?.applicationServerKey&&b64u.enc(sub.options.applicationServerKey)!==v.pub){await sub.unsubscribe();sub=null;}
+    if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u.dec(v.pub)});
+    const j=sub.toJSON();
+    const id='sub-'+b64u.enc(await crypto.subtle.digest('SHA-256',te.encode(j.endpoint))).slice(0,16);
+    const ex=S.data.subs.find(x=>x.id===id);
+    if(!ex||ex.email!==S.user.email){
+      S.data.subs=S.data.subs.filter(x=>x.id!==id);delete S.data.deleted[id];
+      S.data.subs.push(touch({id,email:S.user.email,name:myName(),sub:{endpoint:j.endpoint,keys:j.keys},date:todayStr()}));
+      ls.set('nido_subid',id);save();
+    }
+  }catch(e){console.warn('subscribe',e);}
+  pushLabel();
+}
+function pushState(){
+  if(!pushSupported())return isIOS()&&!isStandalone()?'ios-install':'unsupported';
+  return Notification.permission; // default | granted | denied
+}
+function pushLabel(){const el=$('push-state');if(!el)return;const s=pushState();
+  el.textContent=s==='granted'?(ls.get('nido_push_off')?'Desactivadas':'Activadas'):s==='denied'?'Bloqueadas':s==='default'?'Desactivadas':'No disponible';}
+function askPush(force){
+  const s=pushState();
+  if(s==='granted'&&!ls.get('nido_push_off')){if(force)toast('Las notificaciones ya están activadas');return;}
+  if(!force&&(sessionStorage.getItem('nido_push_asked')||$('onb').classList.contains('on')||document.querySelector('.overlay.open')))return;
+  sessionStorage.setItem('nido_push_asked','1');
+  const foot=$('push-foot');
+  if(s==='ios-install'){
+    $('push-title').textContent='Instalá Nido para recibir avisos';
+    $('push-text').textContent='En iPhone las notificaciones solo funcionan con la app instalada en la pantalla de inicio. Instalala y abrila desde ahí.';
+    foot.innerHTML=`<button class="btn btn-quiet" onclick="pushLater()">Ahora no</button><button class="btn btn-primary" onclick="closeModal('m-push');installApp()">Cómo instalar</button>`;
+  }else if(s==='denied'){
+    $('push-title').textContent='Las notificaciones están bloqueadas';
+    $('push-text').textContent=isIOS()?'Abrí Ajustes del iPhone, entrá a Notificaciones, buscá Nido y activalas.':'Tocá el candado o el ícono junto a la dirección de la página (o los ajustes de la app), entrá a Permisos y activá Notificaciones.';
+    foot.innerHTML=`<button class="btn btn-primary" onclick="closeModal('m-push')">Entendido</button>`;
+  }else if(s==='unsupported'){if(force)toast('Este navegador no permite notificaciones');return;}
+  else{
+    $('push-title').textContent='Activá las notificaciones';
+    $('push-text').textContent='Así te llega al teléfono cuando la otra persona te deja un mensajito, cuando algo se acaba o cuando termina una tarea.';
+    foot.innerHTML=`<button class="btn btn-quiet" onclick="pushLater()">Ahora no</button><button class="btn btn-primary" onclick="enablePush()">Activar</button>`;
+  }
+  openModal('m-push');
+}
+function pushLater(){closeModal('m-push');}
+async function enablePush(){
+  closeModal('m-push');ls.del('nido_push_off');
+  const perm=await Notification.requestPermission();
+  if(perm!=='granted'){pushLabel();if(perm==='denied')toast('El teléfono bloqueó las notificaciones');return;}
+  await setupPush();
+  toast(AUTH_URL?'Listo, te van a llegar los avisos de la casa':'Activadas. Falta conectar el servicio de avisos (Apps Script)');
+}
+async function togglePush(){
+  if(pushState()==='granted'&&!ls.get('nido_push_off')){
+    ls.set('nido_push_off','1');
+    try{const reg=await navigator.serviceWorker.ready;const sub=await reg.pushManager.getSubscription();if(sub)await sub.unsubscribe();}catch(e){}
+    const id=ls.get('nido_subid');if(id){tomb(id);S.data.subs=S.data.subs.filter(x=>x.id!==id);save();}
+    pushLabel();toast('Notificaciones desactivadas en este teléfono');return;
+  }
+  closeModal('m-menu');askPush(true);
+}
+// Cuando llega un aviso con la app abierta, se actualizan los datos al momento
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='pull')pull();});
 
 // =====================================================
 // AVISO DIARIO (notificación del sistema donde el teléfono lo permite)
@@ -1977,7 +2143,7 @@ const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigat
 const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;renderInstallBanner();});
 addEventListener('appinstalled',()=>{deferredPrompt=null;ls.set('nido_inst_off','1');renderInstallBanner();toast('Nido quedó instalado');});
-function openMenu(){dailyLabel();renderSwatches();$('install-row').classList.toggle('hidden',isStandalone());setStatus(S.status);openModal('m-menu');}
+function openMenu(){dailyLabel();pushLabel();renderSwatches();$('install-row').classList.toggle('hidden',isStandalone());setStatus(S.status);openModal('m-menu');}
 async function installApp(){
   if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;renderInstallBanner();return;}
   $('install-steps').innerHTML=isIOS()
@@ -1989,7 +2155,7 @@ function dismissInstall(){ls.set('nido_inst_off','1');renderInstallBanner();}
 function renderInstallBanner(){
   const el=$('install-banner');if(!el)return;
   const showIt=!$('steps-card').innerHTML&&!isStandalone()&&!ls.get('nido_inst_off')&&(deferredPrompt||isIOS()||/android/i.test(navigator.userAgent));
-  el.innerHTML=showIt?`<div class="banner"><img src="icon-192.png" alt=""><div class="body"><b>Instalá Nido</b>Tenelo en la pantalla de inicio.</div>
+  el.innerHTML=showIt?`<div class="banner"><img class="brand-icon" src="icon-192.png" alt=""><div class="body"><b>Instalá Nido</b>Tenelo en la pantalla de inicio.</div>
     <button class="btn btn-tonal btn-sm" onclick="installApp()">Instalar</button><button class="x" onclick="dismissInstall()" aria-label="Cerrar">${ic('x','sm')}</button></div>`:'';
 }
 
@@ -2006,7 +2172,7 @@ function openOnb(){$('onb').classList.add('on');document.body.classList.add('loc
 function onbNext(){const t=$('onb-track'),n=t.children.length,i=onbIndex();
   if(i<n-1){t.scrollTo({left:(i+1)*t.clientWidth,behavior:'smooth'});return;}
   endOnb();if(!S.user)login();}
-function endOnb(){ls.set('nido_onb','1');$('onb').classList.remove('on');if(!document.querySelector('.overlay.open'))document.body.classList.remove('locked');}
+function endOnb(){ls.set('nido_onb','1');if(S.user)setTimeout(()=>askPush(),600);$('onb').classList.remove('on');if(!document.querySelector('.overlay.open'))document.body.classList.remove('locked');}
 $('onb-track').addEventListener('scroll',()=>{clearTimeout(onbUpdate._t);onbUpdate._t=setTimeout(onbUpdate,60);},{passive:true});
 
 // =====================================================
@@ -2025,13 +2191,15 @@ async function boot(){
   if(AUTH_URL&&(qs.has('code')||qs.has('error'))){
     if(!await finishRedirect(qs))return;
     try{await fetchUser();}catch(e){}
-    showApp();go('falta');await connect();return;
+    showApp();go('falta');await connect();setTimeout(()=>askPush(),800);return;
   }
   if(S.user){
     showApp();go(qs.get('v')||'falta');
     if(canSync())connect();else setStatus('off');
     if(qs.get('a')==='scan')setTimeout(()=>openScanner(),300);
     if(qs.get('a')==='gone')setTimeout(openGone,300);
+    if(qs.get('a')==='msgs')setTimeout(openMessages,300);
+    if(!qs.get('a'))setTimeout(()=>askPush(),1500);
     if(qs.has('a')||qs.has('v'))history.replaceState(null,'',location.pathname);
   }else $('splash').classList.add('on');
   if(!ls.get('nido_onb'))openOnb();

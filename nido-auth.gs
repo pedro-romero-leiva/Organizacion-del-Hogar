@@ -14,7 +14,15 @@
  * 3. Implementar → Nueva implementación → Tipo: Aplicación web
  *      Ejecutar como: Yo   ·   Quién tiene acceso: Cualquier persona
  * 4. Copiá la URL que termina en /exec y pegala en AUTH_URL dentro de index.html.
+ *
+ * Este mismo script entrega las notificaciones entre los teléfonos de la casa.
+ * La app las cifra antes de enviarlas: el script no puede leer su contenido,
+ * solo las reenvía al servicio de notificaciones de Google, Apple o Mozilla.
+ * Si cambiás este código, publicalo de nuevo: Implementar → Gestionar implementaciones → Editar → Nueva versión.
  */
+
+// Solo se aceptan servicios de notificaciones conocidos
+const PUSH_HOSTS = /^https:\/\/(fcm\.googleapis\.com|[a-z0-9.-]*\.push\.apple\.com|updates\.push\.services\.mozilla\.com|[a-z0-9.-]*\.notify\.windows\.com)\//;
 
 function doPost(e) {
   try {
@@ -31,6 +39,16 @@ function doPost(e) {
       payload = { code: req.code, client_id: clientId, client_secret: secret, redirect_uri: req.redirect_uri, grant_type: 'authorization_code' };
     } else if (req.action === 'refresh') {
       payload = { refresh_token: req.refresh_token, client_id: clientId, client_secret: secret, grant_type: 'refresh_token' };
+    } else if (req.action === 'push') {
+      if (!PUSH_HOSTS.test(req.endpoint || '')) return out({ error: 'endpoint' });
+      const h = req.headers || {};
+      const headers = {};
+      ['Authorization', 'TTL', 'Urgency', 'Content-Encoding'].forEach(k => { if (h[k]) headers[k] = String(h[k]); });
+      const res = UrlFetchApp.fetch(req.endpoint, {
+        method: 'post', headers: headers, contentType: 'application/octet-stream',
+        payload: Utilities.base64Decode(req.body || ''), muteHttpExceptions: true
+      });
+      return out({ status: res.getResponseCode() });
     } else if (req.action === 'ping') {
       return out({ ok: true });
     } else {

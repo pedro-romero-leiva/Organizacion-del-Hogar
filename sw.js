@@ -1,7 +1,7 @@
 // Nido · service worker
 // - Abre la app aunque no haya señal
 // - Aviso diario de lo que toca (en teléfonos que lo permiten)
-const CACHE = 'nido-v4';
+const CACHE = 'nido-v5';
 const DATA = 'nido-data'; // resumen que la app deja para el aviso diario
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './barcode-ponyfill.js', './juego.js'];
 
@@ -71,6 +71,20 @@ async function dailyNotice() {
 
 self.addEventListener('periodicsync', e => {
   if (e.tag === 'nido-diario') e.waitUntil(dailyNotice());
+});
+
+// ---------- Avisos de la otra persona (Web Push) ----------
+self.addEventListener('push', e => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (err) { d = { title: 'Nido', body: e.data ? e.data.text() : '' }; }
+  e.waitUntil(Promise.all([
+    self.registration.showNotification(d.title || 'Nido', {
+      body: d.body || '', icon: 'icon-192.png', badge: 'icon-192.png', tag: d.tag || 'nido', renotify: true,
+      data: { url: d.url || './' }
+    }),
+    // Si la app está abierta, que traiga los datos nuevos al momento
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(ws => ws.forEach(w => w.postMessage({ type: 'pull' })))
+  ]));
 });
 
 self.addEventListener('notificationclick', e => {

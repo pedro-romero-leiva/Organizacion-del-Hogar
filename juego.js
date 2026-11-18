@@ -8,7 +8,7 @@
   let root, cv, ctx, W = 0, H = 0, dpr = 1, raf = 0, last = 0;
   let state = 'idle'; // idle | play | over
   let P, plats, camY, startY, score, best, bestName, opts = {};
-  let tilt = 0, gotOrient = false, keys = {}, touchDir = 0, hintTimer = 0, savedThisRound = false;
+  let BRAND = '#2e7a5c', tilt = 0, gotOrient = false, keys = {}, touchDir = 0, hintTimer = 0, savedThisRound = false;
 
   const JUMP = -11.6, SPRING = -18, GRAV = 0.38;
 
@@ -53,6 +53,7 @@
   function fmt(n) { return Number(n).toLocaleString('es-CR'); }
 
   function open(o) {
+    BRAND = (getComputedStyle(document.documentElement).getPropertyValue('--brand') || '#2e7a5c').trim();
     opts = o || {}; best = opts.best || 0; bestName = opts.bestName || '';
     if (!root) build();
     root.classList.add('on'); document.body.classList.add('locked');
@@ -174,7 +175,7 @@
     if (!ctx) return;
     const g = ctx.createLinearGradient(0, 0, 0, H);
     const k = Math.min(1, (score || 0) / 4000);
-    g.addColorStop(0, mix([207, 238, 224], [190, 205, 240], k)); g.addColorStop(1, mix([246, 245, 241], [226, 236, 246], k));
+    const br = hexRgb(BRAND); g.addColorStop(0, mix(mix3(br, [255, 255, 255], 0.78), [190, 205, 240], k)); g.addColorStop(1, mix([246, 245, 241], [226, 236, 246], k));
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 
     // Nubes suaves
@@ -188,7 +189,7 @@
 
     for (const p of plats) {
       const y = p.y - camY;
-      ctx.fillStyle = p.t === 'm' ? '#3d6fc2' : '#2e7a5c';
+      ctx.fillStyle = p.t === 'm' ? (BRAND === '#3d6fc2' ? '#7259b8' : '#3d6fc2') : BRAND;
       rr(p.x, y, p.w, 12, 6); ctx.fill();
       ctx.fillStyle = 'rgba(255,255,255,.25)'; rr(p.x + 4, y + 2, p.w - 8, 3, 2); ctx.fill();
       if (p.t === 's') { ctx.fillStyle = '#c4483a'; rr(p.x + p.w / 2 - 9, y - 9, 18, 9, 3); ctx.fill(); }
@@ -205,6 +206,8 @@
     ctx.fillStyle = '#1d1c19'; ctx.beginPath(); ctx.arc(cx + P.face * 7.5, by - h * 0.66, 3, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#e0602a'; ctx.beginPath(); ctx.moveTo(cx + P.face * 15, by - h * 0.55); ctx.lineTo(cx + P.face * 23, by - h * 0.5); ctx.lineTo(cx + P.face * 15, by - h * 0.43); ctx.closePath(); ctx.fill();
   }
+  function hexRgb(h) { h = h.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16) || 0); }
+  function mix3(a, b, t) { return a.map((v, i) => Math.round(v + (b[i] - v) * t)); }
   function mix(a, b, t) { return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',')})`; }
 
   window.NidoJuego = { open };
