@@ -9,8 +9,9 @@ App web (PWA) para manejar el hogar entre dos: lo que falta en la casa, pendient
 |---|---|
 | `index.html` | La app completa |
 | `manifest.webmanifest` + íconos | Permiten instalarla en la pantalla de inicio |
-| `sw.js` | Hace que abra aunque no haya señal |
-| `html5-qrcode.min.js` | Lector de códigos de barras y QR con la cámara |
+| `sw.js` | Hace que abra aunque no haya señal y envía el aviso diario |
+| `barcode-ponyfill.js` + `zxing_reader.wasm` | Lector rápido de códigos de barras y QR (en Android usa el lector nativo del teléfono) |
+| `juego.js` | Minijuego de reto «Salto Nido» |
 | `nido-auth.gs` | Apps Script opcional para la sesión permanente (no se publica, se pega en script.google.com) |
 
 ## Sesión permanente (opcional)
