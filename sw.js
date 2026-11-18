@@ -1,7 +1,7 @@
 // Nido · service worker
 // - Abre la app aunque no haya señal
 // - Aviso diario de lo que toca (en teléfonos que lo permiten)
-const CACHE = 'nido-v5';
+const CACHE = 'nido-v6';
 const DATA = 'nido-data'; // resumen que la app deja para el aviso diario
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './barcode-ponyfill.js', './juego.js'];
 
